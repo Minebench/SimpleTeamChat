@@ -1,0 +1,44 @@
+name: ${project.name}
+main: de.themoep.simpleteamchat.SimpleTeamChat
+version: '${minecraft.plugin.version}'
+description: ${project.description}
+authors: [Phoenix616]
+soft-depend: [ServerTags, PermissionsEx]
+commands:
+   SimpleTeamChat:
+      aliases: [stc]
+      description: Command description.
+      usage: /<command> [reload|team <teamname> <msg>]
+      permission: simpleteamchat.command
+      permission-message: You don't have the permission <permission>
+   chat:
+      aliases: [global,eglobal]
+      description: Send a message to all online players or focus the channel
+      usage: /<command> [<message>]
+      permission: simpleteamchat.chat
+      permission-message: You don't have the permission <permission>
+   teamchat:
+      aliases: [.]
+      description: Send a message to all your team members or focus the channel
+      usage: /<command> [<message>]
+      permission: simpleteamchat.chat
+      permission-message: You don't have the permission <permission>
+permissions:
+   simpleteamchat.command:
+      description: Gives permission to the admin command
+      default: op
+   simpleteamchat.command.reload:
+      description: Gives permission to the reload function of the admin command
+      default: op
+   simpleteamchat.command.team:
+      description: Gives permission to the team send function of the admin command
+      default: op
+   simpleteamchat.chat:
+      description: Gives permission to the chat command
+      default: true
+   simpleteamchat.chat.spy:
+      description: Gives permission to read and write to all channels
+      default: op
+   simpleteamchat.chat.color:
+      description: Gives permission to use color codes
+      default: op

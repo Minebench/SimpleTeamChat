@@ -1,0 +1,6 @@
+globalchannel: G
+globalcolor: GRAY
+serverinfo: " &7(%tag%)"
+channeltag: "%color%%tag%&7|"
+globalformat: "%prefix%&f%username%%suffix%%serverinfo%&f: &7%msg%"
+teamformat: "%tag%%prefix%&f%username%%suffix%%serverinfo%&f: &7%msg%"
