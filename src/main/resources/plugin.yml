@@ -3,7 +3,7 @@ main: de.themoep.simpleteamchat.SimpleTeamChat
 version: '${minecraft.plugin.version}'
 description: ${project.description}
 authors: [Phoenix616]
-soft-depend: [ServerTags, PermissionsEx]
+softdepend: [ServerTags, PermissionsEx]
 commands:
    SimpleTeamChat:
       aliases: [stc]
