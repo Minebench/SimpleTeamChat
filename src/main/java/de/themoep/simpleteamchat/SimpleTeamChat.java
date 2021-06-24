@@ -2,6 +2,7 @@ package de.themoep.simpleteamchat;
 
 import de.themoep.servertags.bukkit.ServerInfo;
 import de.themoep.servertags.bukkit.ServerTags;
+import net.milkbowl.vault.chat.Chat;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,10 +13,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.ServiceRegisterEvent;
+import org.bukkit.event.server.ServiceUnregisterEvent;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +46,7 @@ import java.util.UUID;
 public class SimpleTeamChat extends JavaPlugin implements CommandExecutor, Listener {
 
     private ServerTags serverTags = null;
-    private PermissionsEx permissionsEx = null;
+    private Chat chat = null;
 
     private Map<UUID, ChatDestination> playerChannels = new HashMap<UUID, ChatDestination>();
 
@@ -58,8 +60,29 @@ public class SimpleTeamChat extends JavaPlugin implements CommandExecutor, Liste
     public void onEnable() {
         loadConfig();
         serverTags = (ServerTags) getServer().getPluginManager().getPlugin("ServerTags");
-        permissionsEx = (PermissionsEx) getServer().getPluginManager().getPlugin("PermissionsEx");
+        setupVaultChat();
         getServer().getPluginManager().registerEvents(this, this);
+    }
+
+    private void setupVaultChat() {
+        RegisteredServiceProvider<Chat> crp = getServer().getServicesManager().getRegistration(Chat.class);
+        if (crp != null) {
+            chat = crp.getProvider();
+        }
+    }
+
+    @EventHandler
+    public void onServiceRegister(ServiceRegisterEvent event) {
+        if (Chat.class.isAssignableFrom(event.getProvider().getService())) {
+            setupVaultChat();
+        }
+    }
+
+    @EventHandler
+    public void onServiceUnregister(ServiceUnregisterEvent event) {
+        if (Chat.class.isAssignableFrom(event.getProvider().getService())) {
+            setupVaultChat();
+        }
     }
 
     private void loadConfig() {
@@ -259,12 +282,9 @@ public class SimpleTeamChat extends JavaPlugin implements CommandExecutor, Liste
         format = format.replace("%serverinfo%", info);
         String prefix = "";
         String suffix = "";
-        if(permissionsEx != null && sender instanceof Player) {
-            PermissionUser permUser = permissionsEx.getPermissionsManager().getUser((Player) sender);
-            if(permUser != null) {
-                prefix = ChatColor.translateAlternateColorCodes('&', permUser.getPrefix());
-                suffix = ChatColor.translateAlternateColorCodes('&', permUser.getSuffix());
-            }
+        if(chat != null && sender instanceof Player) {
+            prefix = ChatColor.translateAlternateColorCodes('&', chat.getPlayerPrefix((Player) sender));
+            suffix = ChatColor.translateAlternateColorCodes('&', chat.getPlayerSuffix((Player) sender));
         }
         format = format.replace("%prefix%", prefix);
         format = format.replace("%suffix%", suffix);
